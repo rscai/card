@@ -1,0 +1,43 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Assets.at(path="/public", file="hall.html")
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+# authentication
+
+GET /authentication/login.html		controllers.Assets.at(path="/public/authentication", file="login.html")
+
+GET /authentication/oauth/callback/:kind  controllers.Authentication.callback(kind)
+
+
+
+# Hall room management
+POST    /data/rest/room                  controllers.Hall.create
+
+GET    /data/rest/room                  controllers.Hall.query
+
+GET    /data/rest/room/:roomId                  controllers.Hall.get(roomId)
+
+
+## restfule
+
+#POST    /data/:kind                     controllers.RestService.post(kind)
+
+
+######################3
+## Real time services
+##
+GET     /service/user/:userId                    controllers.Connector.communicate(userId)
+# entr room
+GET     /service/room/:roomId               controllers.Hall.enterRoom(roomId)
+
+
+##############
+## tools
+
+POST    /tool/proxy/weibo                  controllers.WeiboProxy.post

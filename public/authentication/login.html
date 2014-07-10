@@ -1,0 +1,51 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+
+<!-- 防止缓存 -->
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="pragma" content="no-cache">
+
+<title>Your Application Name</title>
+<!-- application stylesheet will go here -->
+<!-- dynamically apply native visual theme according to the browser user agent -->
+<script type="text/javascript"
+	src="/assets/library/dojo/dojox/mobile/deviceTheme.js"></script>
+<!-- dojo configuration options -->
+<script type="text/javascript">
+	dojoConfig = {
+		async : true,
+		parseOnLoad : false
+	};
+</script>
+<!-- dojo bootstrap -->
+<script type="text/javascript"
+	src="/assets/library/dojo/dojo/dojo.js.uncompressed.js"></script>
+<!-- dojo application code -->
+<script type="text/javascript">
+	require([ "dojox/mobile/parser", "dojo/dom-form", "dojox/mobile/compat",
+			"dojo/domReady!", "dojox/mobile/View", "dojox/mobile/Heading",
+			"dojox/mobile/RoundRectList", "dojox/mobile/ListItem" ], function(
+			parser) {
+		// now parse the page for widgets
+		parser.parse();
+	});
+</script>
+</head>
+<body style="visibility: hidden;">
+	<div id="loginView" data-dojo-type="dojox.mobile.View" selected="true">
+		<div data-dojo-type="dojox/mobile/Heading"
+			data-dojo-props='label:"选择以下帐号登入",fixed:"top"'></div>
+
+		<ul data-dojo-type="dojox.mobile.RoundRectList" class="list1"
+			id="roomList" data-dojo-props='iconBase:"/assets/images/all-icons.png"'>
+			<li data-dojo-type="dojox/mobile/ListItem"
+				data-dojo-props='iconPos:"0,0,29,29",href:"https://api.weibo.com/oauth2/authorize?client_id=357713296&response_type=code&redirect_uri=http://gamecenter.firecloud.me/authentication/oauth/callback/sina"'>新浪微博</li>
+			
+		</ul>
+	</div>
+</body>
+</html>

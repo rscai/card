@@ -1,0 +1,209 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+
+<!-- 防止缓存 -->
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="pragma" content="no-cache">
+
+<title>Your Application Name</title>
+<style type="text/css">
+.room-item{
+	width:100%;
+}
+
+.room-item > .item-head{
+width:100%;
+}
+.room-item > .item-head > img{
+	width:20%;
+	float:left;
+}
+.room-item > .item-head > h1{
+	width:80%;
+	float:left;
+}
+
+.room-item > .seat-list{
+width:100%;
+float:left;
+}
+.room-item > .seat-list > .seat{
+	width:100px;
+	height:100px;
+	float:left;
+	padding:14px 14px 14px 14px;
+}
+
+.room-item > .seat-list > .free-seat:hover{
+	cursor:pointer;
+}
+
+.room-item > .seat-list > .seat > img{
+width:100px;
+	height:100px;
+}
+.room-item > .description{
+width:100%;
+float:left;
+}
+
+.roomListItem { /* 内容可以分多行显示 */  
+    line-height:18px;  
+    height:auto;  
+}
+</style>
+<!-- application stylesheet will go here -->
+<!-- dynamically apply native visual theme according to the browser user agent -->
+<script type="text/javascript"
+	src="/assets/library/dojo/dojox/mobile/deviceTheme.js"></script>
+<!-- dojo configuration options -->
+<script type="text/javascript">
+	dojoConfig = {
+		async : true,
+		parseOnLoad : false
+	};
+</script>
+<!-- dojo bootstrap -->
+<script type="text/javascript"
+	src="/assets/library/dojo/dojo/dojo.js.uncompressed.js"></script>
+<!-- dojo application code -->
+<script type="text/javascript">
+	require([ "dojox/mobile/parser", "dojo/dom-form", "dojox/mobile/compat",
+			"dojo/domReady!", "dojox/mobile/View",
+			"dojox/mobile/ScrollableView", "dojox/mobile/TabBar",
+			"dojox/mobile/TabBarButton", "dojox/mobile/Heading",
+			"dojox/mobile/RoundRectList", "dojox/mobile/ListItem",
+			"dojox/mobile/ScrollablePane", "dojox/mobile/EdgeToEdgeList",
+			"dojox/mobile/ListItem", "dijit/form/DataList",
+			"dojox/mobile/ComboBox", "dojox/mobile/FormLayout",
+			"dojo/_base/window",
+			  "dojo/dom-construct",
+			  "dojox/mobile/SimpleDialog","dojo/dom-construct","dojo","dojox/mobile/Button",
+			"dijit/form/Form", "dojox/mobile/Slider", "dojox/mobile/Switch" ],
+			function(parser) {
+				// now parse the page for widgets
+				parser.parse();
+			});
+</script>
+<script type="text/javascript" src="/assets/js/hall.js">
+	
+</script>
+</head>
+<body style="visibility: hidden;">
+	<div id="roomView" data-dojo-type="dojox.mobile.ScrollableView"
+		selected="true">
+		<div data-dojo-type="dojox/mobile/Heading"
+			data-dojo-props='label:"World Clock",fixed:"top"'>
+			<span data-dojo-type="dojox/mobile/ToolBarButton"
+				data-dojo-props="onClick:refreshRoomList">Refresh </span> <span
+				data-dojo-type="dojox/mobile/ToolBarButton"
+				data-dojo-props='icon:"mblDomButtonWhitePlus"' style="float: right;"
+				moveTo="createRoomView"></span>
+		</div>
+		<ul data-dojo-type="dojox.mobile.RoundRectList" class="list1"
+			id="roomList">
+			
+		</ul>
+	</div>
+	<div id="tabView2" data-dojo-type="dojox.mobile.ScrollableView">
+		<div>2</div>
+	</div>
+	<div id="tabView3" data-dojo-type="dojox.mobile.ScrollableView">
+		<div>3</div>
+	</div>
+	<!-- create room view -->
+	<div id="createRoomView" data-dojo-type="dojox.mobile.ScrollableView">
+		<script>
+			var submitCreateRoom = function() {
+				// construct json payload
+				var formJson = dojo.formToJson("createRoomForm");
+
+				console.debug(formJson);
+
+				// post 
+
+				var xhrArgs = {
+					url : "/data/rest/room",
+					headers : {
+						"Content-Type" : "application/json",
+						"Accept" : "application/json"
+					},
+					handleAs : "json",
+					postData : formJson,
+					load : function(data) {
+						console.debug(data);
+
+						var roomId = data.id;
+
+						// goto room
+
+						var url = "/service/room/" + roomId;
+
+						window.location = url;
+					},
+					error : function(error) {
+						console.error(error);
+					}
+				};
+
+				var deferred = dojo.xhrPost(xhrArgs);
+			};
+		</script>
+		<div data-dojo-type="dojox/mobile/Heading"
+			data-dojo-props='label:"Create Room", back:"Hall", moveTo:"roomView",fixed:"top"'>
+			<span data-dojo-type="dojox/mobile/ToolBarButton"
+				data-dojo-props='label:"Done",defaultColor:"mblColorBlue",onClick:submitCreateRoom'
+				style="float: right;"></span>
+		</div>
+		<form id="createRoomForm" name="createRoomForm">
+			<div data-dojo-type="dojox/mobile/FormLayout"
+				data-dojo-props="columns:'auto'">
+				<div>
+					<label>类型：</label>
+					<fieldset>
+						<select data-dojo-type="dijit/form/DataList"
+							data-dojo-props='id:"gameTypeList"'>
+							<option value="card" selected>card</option>
+							<option>other1</option>
+							<option>other2</option>
+						</select> <input name="kind" type="text"
+							data-dojo-type="dojox/mobile/ComboBox"
+							data-dojo-props='list:"gameTypeList"' />
+					</fieldset>
+				</div>
+				<div>
+					<label>名称：</label>
+					<fieldset>
+						<input name="name" data-dojo-type="dojox/mobile/TextBox"
+							placeHolder="Enter name" />
+					</fieldset>
+				</div>
+				<div>
+					<label>坐位：</label>
+					<fieldset>
+						<input name="seatNum" type="number" value="3"
+							data-dojo-type="dojox/mobile/TextBox"
+							placeHolder="Enter seat number" />
+					</fieldset>
+				</div>
+			</div>
+		</form>
+	</div>
+	
+
+	<ul id="demoTabBar" data-dojo-type="dojox.mobile.TabBar" single="true"
+		iconBase="/assets/images/tabbar_all.png" fixed="bottom">
+		<li data-dojo-type="dojox.mobile.TabBarButton" moveTo="roomView"
+			iconPos1="688,0,30,30" iconPos2="784,0,30,30" selected="true"></li>
+		<li data-dojo-type="dojox.mobile.TabBarButton" moveTo="tabView2"
+			iconPos1="720,0,30,30" iconPos2="816,0,30,30"></li>
+		<li data-dojo-type="dojox.mobile.TabBarButton" moveTo="tabView3"
+			iconPos1="752,0,30,30" iconPos2="848,0,30,30"></li>
+	</ul>
+
+</body>
+</html>

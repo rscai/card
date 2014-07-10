@@ -1,0 +1,17 @@
+{
+    "debugMode" : 1,
+    "showFPS" : true,
+    "frameRate" : 60,
+    "id" : "gameCanvas",
+    "renderMode" : 2,
+    "engineDir":"/assets/library/cocos2d-html5/",
+
+    "modules" : ["cocos2d","ccui"],
+
+    "jsList" : [
+        "/assets/game/poker/src/resource.js",
+        "/assets/game/poker/src/poker.js",
+        "/assets/game/poker/src/room.js",
+        "/assets/game/poker/src/test.js"
+    ]
+}

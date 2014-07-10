@@ -1,0 +1,122 @@
+@(room: me.firecloud.gamecenter.model.RoomDescription, selfId: String)
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Cocos2d-html5 Hello World test</title>
+<link rel="icon" type="image/GIF" href="res/favicon.ico" />
+<meta name="viewport" content="width=321,user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="screen-orientation" content="portrait" />
+<meta name="x5-fullscreen" content="true" />
+<meta name="360-fullscreen" content="true" />
+<style>
+body,canvas,div {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	-khtml-user-select: none;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+</style>
+<script type="text/javascript">
+var fc = {
+        serviceInfo:{
+           host:"localhost",
+           port:9000
+        },
+	    gameInfo : {
+	        projectLocation : "/assets/game/poker/project.json"
+	    },
+	    roomInfo : {
+	        id : "@room.id",
+	        name : "@room.name",
+	        seatSize:@room.seatNum,
+	    },
+	    self : {
+	        id : "@selfId",
+	        name : ""
+	    }
+	};
+</script>
+<script type="text/javascript"
+	src="/assets/library/dojo/dojox/mobile/deviceTheme.js"></script>
+<!-- dojo configuration options -->
+<script type="text/javascript">
+	dojoConfig = {
+		async : true,
+		parseOnLoad : false
+	};
+</script>
+<!-- dojo bootstrap -->
+<script type="text/javascript"
+	src="/assets/library/dojo/dojo/dojo.js.uncompressed.js"></script>
+<!-- dojo application code -->
+<script type="text/javascript">
+	require([ "dojox/mobile/parser", "dojo/_base/connect","dojo/dom-form", "dojox/mobile/compat",
+			"dojo/domReady!", "dojox/mobile/View", "dojox/mobile/Heading",
+			"dojox/mobile/RoundRectList", "dojox/mobile/ListItem","dojox/mobile/SimpleDialog" ], function(
+			parser,connect) {
+		// now parse the page for widgets
+		parser.parse();
+		connect.connect(dijit.registry.byId("inviteView"),"onAfterTransitionIn",null, function(moveTo, dir, transition, context, method){
+			console.debug("start inviteView");
+			
+			reloadFriendList();
+			
+			
+		});
+		
+		// init 
+		// connect to websocket, and send join room message
+		joinRoom();
+	});
+</script>
+<script type="text/javascript" src="/assets/js/room-waitting.js">
+
+</script>
+</head>
+<body style="visibility: hidden;">
+<div id="waittingView" data-dojo-type="dojox.mobile.View" selected="true">
+		<div data-dojo-type="dojox/mobile/Heading"
+			data-dojo-props='label:"等待其它用户加入...",fixed:"top"'>
+			<span data-dojo-type="dojox/mobile/ToolBarButton"
+				data-dojo-props="onClick:leaveRoom">退出</span> <span
+				data-dojo-type="dojox/mobile/ToolBarButton"
+				data-dojo-props='icon:"mblDomButtonWhitePlus"' style="float: right;"
+				moveTo="inviteView"></span>
+			</div>
+
+		<ul data-dojo-type="dojox.mobile.RoundRectList" class="list1"
+			id="jointPlayerList" data-dojo-props='variableHeight:true'>
+			@for(i<-List.range(0,room.seatNum)){
+				@if(room.seats !=null && room.seats.size >i && room.seats(i)._1 !=null){
+					<li data-dojo-type="dojox/mobile/ListItem"
+				data-dojo-props='icon:"@room.seats(i)._3"'>@room.seats(i)._2</li>
+				}else{
+			
+				<li data-dojo-type="dojox/mobile/ListItem"
+				data-dojo-props='icon:""'>等待。。。</li>
+				}
+			}
+		</ul>
+	</div>
+	<div id="inviteView" data-dojo-type="dojox.mobile.View">
+	<div data-dojo-type="dojox/mobile/Heading"
+			data-dojo-props='label:"等待其它用户加入...",fixed:"top",back:"后退",moveTo:"waittingView"'>
+			<span
+				data-dojo-type="dojox/mobile/ToolBarButton"
+				data-dojo-props='onClick:inviteFriends' style="float: right;">邀请</span>
+			</div>
+			<ul data-dojo-type="dojox.mobile.RoundRectList" class="list1"
+			id="friendList" data-dojo-props="select:'multiple'">
+
+		</ul>
+	</div>
+	
+	<div id="gotoPlayingSceneNotifyDlg" data-dojo-type="dojox/mobile/SimpleDialog">
+  		<div class="mblSimpleDialogTitle">Information</div>
+  		<div class="mblSimpleDialogText">开始游戏。。。</div>
+	</div>
+</body>
