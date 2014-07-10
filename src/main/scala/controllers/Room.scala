@@ -84,7 +84,7 @@ object Hall extends Controller with Logging {
 
         val roomSupervisor = Akka.system().actorSelection("user/room")
 
-        implicit val timeout = Timeout(1 seconds)
+        implicit val timeout = Timeout(5 seconds)
 
         val future = roomSupervisor ? new Query(criteria)
 
