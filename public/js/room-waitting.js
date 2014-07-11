@@ -88,6 +88,8 @@ var JoinRoom = function(userId, roomId, position) {
 
 var leaveRoom = function() {
 	console.debug("leave room");
+	
+	window.location="/";
 }
 
 var inviteFriends = function() {

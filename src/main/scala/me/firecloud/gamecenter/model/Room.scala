@@ -149,7 +149,7 @@ class RoomSupervisor extends Actor with Logging {
 
       sender ! roomDescription
     case Query(criteria: String) =>
-      sender ! freeRooms.values.toList.foreach(room=>populateRoom(room))
+      sender ! freeRooms.values.toList.map(room=>populateRoom(room))
     case Update(description: RoomDescription) =>
       // 
       if (description.seats.size == description.seatNum && !description.seats.exists((x: Tuple3[String, String, String]) => x._1 == null)) {
