@@ -33,6 +33,6 @@ case class Card(@JsonProperty id: String, @JsonScalaEnumeration(classOf[SuitType
 
 object PokerPack {
     def cards: List[Card] = {
-        (for (suit <- Suit.values; point <- (1 to 13)) yield new Card(suit.toString() + "-" + point, suit, point)).toList ::: List(new Card("senior-joker", null, 0), new Card("junior-joker", null, 0))
+        (for (suit <- Suit.values; point <- (1 to 13)) yield new Card(suit.toString() + "-" + point, suit, point)).toList
     }
 }

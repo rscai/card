@@ -46,7 +46,8 @@ object Authentication extends Controller with Logging {
 
           val socialId = accessToken.getUid()
           val socialToken = accessToken.getAccessToken()
-          val socialExpire = System.currentTimeMillis() + accessToken.getExpireIn().toLong
+          // if expire return by sina weibo is shorter than 1 day (86400000), then set it as 1 day
+          val socialExpire =  if(accessToken.getExpireIn().toLong < 86400000){System.currentTimeMillis() + 86400000}else{ System.currentTimeMillis()+accessToken.getExpireIn().toLong}
 
           debug("expire:" + socialExpire + ",social token expire in:" + accessToken.getExpireIn())
 

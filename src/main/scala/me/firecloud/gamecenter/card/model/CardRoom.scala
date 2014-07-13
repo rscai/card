@@ -165,8 +165,8 @@ class CardRoom(id: String, name: String, seatNum: Int) extends Room(id, "card", 
 
         // deal last three cards
 
-        var cards = reservedCards.take(3)
-        reservedCards = reservedCards.drop(3)
+        var cards = reservedCards.take(4)
+        reservedCards = reservedCards.drop(4)
 
         maxBetSeat.hand = maxBetSeat.hand ++ cards
 
@@ -300,7 +300,7 @@ class CardRoom(id: String, name: String, seatNum: Int) extends Room(id, "card", 
   }
 
   protected def dealCard: Unit = {
-    val cardBatchSize = 17
+    val cardBatchSize = 16
     val messages = seats.map(seat => {
       // construct deal card message
       val cards = reservedCards.take(cardBatchSize)
