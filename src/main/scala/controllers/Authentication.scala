@@ -25,7 +25,7 @@ object Authentication extends Controller with Logging {
 
   WeiboConfig.updateProperties("client_ID", "357713296");
   WeiboConfig.updateProperties("client_SERCRET", "7c4edf948c95062dcf5948cbe734e495");
-  WeiboConfig.updateProperties("redirect_URI", "http://gamecenter.firecloud.me/authentication/callback/sina");
+  WeiboConfig.updateProperties("redirect_URI", "http://kkppccdd-game-center.herokuapp.com/authentication/callback/sina");
   WeiboConfig.updateProperties("baseURL", "https://api.weibo.com/2/");
   WeiboConfig.updateProperties("accessTokenURL", "https://api.weibo.com/oauth2/access_token");
   WeiboConfig.updateProperties("authorizeURL", "https://api.weibo.com/oauth2/authorize");
