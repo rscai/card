@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
  Copyright (c) 2012 James Chen
 
  http://www.cocos2d-x.org
@@ -249,7 +250,10 @@ cc.EditBox = cc.ControlButton.extend({
         tmpEdTxt.style.height = "100%";
         tmpEdTxt.style.active = 0;
         tmpEdTxt.style.outline = "medium";
-
+        var onCanvasClick = function() {
+            tmpEdTxt.blur();
+        };
+        
         // TODO the event listener will be remove when EditBox removes from parent.
         cc._addEventListener(tmpEdTxt, "input", function () {
             if (selfPointer._delegate && selfPointer._delegate.editBoxTextChanged)
@@ -270,6 +274,7 @@ cc.EditBox = cc.ControlButton.extend({
             }
             if (selfPointer._delegate && selfPointer._delegate.editBoxEditingDidBegin)
                 selfPointer._delegate.editBoxEditingDidBegin(selfPointer);
+            cc._addEventListener(cc._canvas, "click", onCanvasClick);
         });
         cc._addEventListener(tmpEdTxt, "blur", function () {
             if (this.value == "") {
@@ -281,6 +286,7 @@ cc.EditBox = cc.ControlButton.extend({
                 selfPointer._delegate.editBoxEditingDidEnd(selfPointer);
             if (selfPointer._delegate && selfPointer._delegate.editBoxReturn)
                 selfPointer._delegate.editBoxReturn(selfPointer);
+            cc._canvas.removeEventListener('click', onCanvasClick);
         });
 
         cc.DOM.convert(tmpDOMSprite);
@@ -342,9 +348,27 @@ cc.EditBox = cc.ControlButton.extend({
 
     /**
      *  Set the text entered in the edit box.
+     * @deprecated
      * @param {string} text The given text.
      */
     setText: function (text) {
+        cc.log("Please use the setString");
+        if (text != null) {
+            if (text == "") {
+                this._edTxt.value = this._placeholderText;
+                this._edTxt.style.color = cc.colorToHex(this._placeholderColor);
+            } else {
+                this._edTxt.value = text;
+                this._edTxt.style.color = cc.colorToHex(this._textColor);
+            }
+        }
+    },
+
+    /**
+     *  Set the text entered in the edit box.
+     * @param {string} text The given text.
+     */
+    setString: function (text) {
         if (text != null) {
             if (text == "") {
                 this._edTxt.value = this._placeholderText;
@@ -475,9 +499,19 @@ cc.EditBox = cc.ControlButton.extend({
 
     /**
      * Gets the  input string of the edit box.
+     * @deprecated
      * @return {string}
      */
     getText: function () {
+        cc.log("Please use the getString");
+        return this._edTxt.value;
+    },
+
+    /**
+     * Gets the  input string of the edit box.
+     * @return {string}
+     */
+    getString: function () {
         return this._edTxt.value;
     },
 
@@ -591,7 +625,7 @@ _p.fontColor;
 cc.defineGetterSetter(_p, "fontColor", null, _p.setFontColor);
 /** @expose */
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getText, _p.setText);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
 /** @expose */
 _p.maxLength;
 cc.defineGetterSetter(_p, "maxLength", _p.getMaxLength, _p.setMaxLength);

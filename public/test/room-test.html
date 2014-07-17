@@ -1,15 +1,51 @@
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Room Test</title>
-  <link rel="stylesheet" href="qunit/qunit-1.14.0.css">
-  <script src="http://www.google.com/jsapi?key=AIzaSyA5m1Nc8ws2BbmPRwKu5gFradvD_hgq6G0" type="text/javascript"></script>
-  <script src="qunit/qunit-1.14.0.js"></script>
-  <script src="room-test.js"></script>
+<meta charset="utf-8">
+<title>Cocos2d-html5 Hello World test</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="screen-orientation" content="landscape" />
+<meta name="x5-fullscreen" content="true" />
+<meta name="360-fullscreen" content="true" />
+<style>
+body,canvas,div {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	-khtml-user-select: none;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+</style>
+
 </head>
 <body>
-  <div id="qunit"></div>
-  <div id="qunit-fixture"></div>
-  
+<canvas id="gameCanvas" width="960" height="640"></canvas>
+
+	<script type="text/javascript">
+	var fc = {
+	        serviceInfo:{
+	           host:window.location.hostname,
+           	   port:window.location.port
+	        },
+		    gameInfo : {
+		        projectLocation : "/assets/game/poker/project.json"
+		    },
+		    roomInfo : {
+		        id : "@room.id",
+		        name : "@room.name",
+		        seatSize:3,
+		        seats:new Array()
+		    },
+		    self : {
+		        id : "@selfId",
+		        name : ""
+		    }
+		};
+
+</script>
+	<script src="/assets/library/cocos2d-html5/CCBoot.js"></script>
+	<script src="/assets/test/room-test.js"></script>
 </body>
 </html>

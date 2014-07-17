@@ -170,8 +170,6 @@ float:left;
 						<select data-dojo-type="dijit/form/DataList"
 							data-dojo-props='id:"gameTypeList"'>
 							<option value="card" selected>card</option>
-							<option>other1</option>
-							<option>other2</option>
 						</select> <input name="kind" type="text"
 							data-dojo-type="dojox/mobile/ComboBox"
 							data-dojo-props='list:"gameTypeList"' />
@@ -187,7 +185,7 @@ float:left;
 				<div>
 					<label>坐位：</label>
 					<fieldset>
-						<input name="seatNum" type="number" value="3"
+						<input name="seatNum" type="number" value="3" readonly="true"
 							data-dojo-type="dojox/mobile/TextBox"
 							placeHolder="Enter seat number" />
 					</fieldset>

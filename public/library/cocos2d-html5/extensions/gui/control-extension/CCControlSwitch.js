@@ -1,6 +1,8 @@
 /**
  *
- * Copyright (c) 2010-2012 cocos2d-x.org
+ * Copyright (c) 2008-2010 Ricardo Quesada
+ * Copyright (c) 2011-2012 cocos2d-x.org
+ * Copyright (c) 2013-2014 Chukong Technologies Inc.
  *
  * Copyright 2011 Yannick Loriot. All rights reserved.
  * http://yannickloriot.com
@@ -264,17 +266,17 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
         this._thumbSprite.setPosition(this._onSprite.getContentSize().width + this._sliderXPosition,
             this._maskSize.height / 2);
 
-        this._backRT.begin();
-
-        this._onSprite.visit();
-        this._offSprite.visit();
-
-        if (this._onLabel)
-            this._onLabel.visit();
-        if (this._offLabel)
-            this._offLabel.visit();
-
-        this._backRT.end();
+//        this._backRT.begin();
+//
+//        this._onSprite.visit();
+//        this._offSprite.visit();
+//
+//        if (this._onLabel)
+//            this._onLabel.visit();
+//        if (this._offLabel)
+//            this._offLabel.visit();
+//
+//        this._backRT.end();
 
         //this.setFlippedY(true);
     },

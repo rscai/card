@@ -121,12 +121,22 @@ var TestLayer=cc.LayerGradient.extend({
 		
 		timer.start();
 		// test button
+		
+		var titleButton = cc.LabelTTF.create("出牌", "Marker Felt",60);
+        //titleButton.color = cc.color(0, 0, 0);
+        
+        var backgroundButton = cc.Scale9Sprite.create(RES.image.button);
+		var bn = cc.ControlButton.create(titleButton, backgroundButton);
+		
+		bn.addTargetWithActionForControlEvents(this,function (sender, controlEvent){
+			console.debug("Button down");
+		}, cc.CONTROL_EVENT_TOUCH_DOWN);
+		
 		/*
-		var bn = ccui.Button.create();
 		bn.loadTextures(RES.image.button,RES.image.button,"");
 		
 		bn.setTitleText("出牌");
-		bn.setTitleFontSize(60);
+		//bn.setTitleFontSize(60);
 		bn.setTouchEnabled(true);
 		bn.addTouchEventListener(function(sender,type){
 			switch (type) {
@@ -150,12 +160,12 @@ var TestLayer=cc.LayerGradient.extend({
                 break;
         }
 		},bn);
-		
+		*/
 		bn.setAnchorPoint(new cc.Point(0,0));
-		bn.setPosition(new cc.Point(100,200));
+		bn.setPosition(new cc.Point(128,200));
 		
 		this.addChild(bn);
-	*/
+	
 	}
 });
 

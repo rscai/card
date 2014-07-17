@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -132,8 +132,8 @@ cc.IMEDelegate = cc.Class.extend(/** @lends cc.IMEDelegate# */{
 });
 
 /**
- * @namespace Input Method Edit Message Dispatcher.
- * @name cc.imeDispatcher
+ * Input Method Edit Message Dispatcher.
+ * @namespace cc.imeDispatcher
  */
 cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
     _domInputControl:null,

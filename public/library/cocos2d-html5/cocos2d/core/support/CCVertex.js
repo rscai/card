@@ -1,5 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2008-2010 Ricardo Quesada
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
  Copyright (c) 2009      Valentin Milea
 
  http://www.cocos2d-x.org
@@ -147,4 +149,22 @@ cc.vertexLineIntersect = function (Ax, Ay, Bx, By, Cx, Cy, Dx, Dy) {
 
     // Success.
     return {isSuccess:true, value:t};
+};
+
+/**
+ * returns wheter or not polygon defined by vertex list is clockwise
+ * @param {Array} verts
+ * @return {Boolean}
+ */
+cc.vertexListIsClockwise = function(verts) {
+    for (var i = 0, len = verts.length; i < len; i++) {
+        var a = verts[i];
+        var b = verts[(i + 1) % len];
+        var c = verts[(i + 2) % len];
+
+        if (cc.pCross(cc.pSub(b, a), cc.pSub(c, b)) > 0)
+            return false;
+    }
+
+    return true;
 };

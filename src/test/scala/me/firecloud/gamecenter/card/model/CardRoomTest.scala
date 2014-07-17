@@ -132,6 +132,11 @@ class CardEngineTest extends TestKit(ActorSystem("unittest")) with ImplicitSende
     val tripleFourWithPairKing = List(new Card("spades-4", Suit.spades, 4), new Card("clubs-4", Suit.clubs, 4), new Card("hearts-4", Suit.hearts, 4), new Card("spades-13", Suit.spades, 13), new Card("diamonds-13", Suit.diamonds, 13))
     val tripleNineWithPairJack = List(new Card("spades-9", Suit.spades, 9), new Card("clubs-9", Suit.clubs, 9), new Card("hearts-9", Suit.hearts, 9), new Card("spades-11", Suit.spades, 11), new Card("diamonds-11", Suit.diamonds, 11))
 
+    val pairSequenceFiveToSeven =List(new Card("clubs-5",Suit.clubs,5), Card("diamonds-5",Suit.diamonds,5), Card("clubs-6",Suit.clubs,6), Card("spades-7",Suit.spades,7), Card("spades-6",Suit.spades,6), Card("clubs-7",Suit.clubs,7))
+    
+     val pairSequenceSevenToNine =List(new Card("clubs-8",Suit.clubs,8), Card("diamonds-8",Suit.diamonds,8), Card("clubs-9",Suit.clubs,9), Card("spades-7",Suit.spades,7), Card("spades-9",Suit.spades,9), Card("clubs-7",Suit.clubs,7))
+
+        
     assertTrue("start put single ace", roomActorRef.underlyingActor.matchPutCardRule(emptyCards, singleAce));
 
     assertTrue("single king is greater than single three", roomActorRef.underlyingActor.matchPutCardRule(singleThree, singleKing));
@@ -165,6 +170,9 @@ class CardEngineTest extends TestKit(ActorSystem("unittest")) with ImplicitSende
     assertTrue("boomb three is greater than any tripleWithPair", roomActorRef.underlyingActor.matchPutCardRule(tripleNineWithPairJack, boombThree))
     
     assertTrue("boomb three is greater than sequence", roomActorRef.underlyingActor.matchPutCardRule(sequenceNineToAce, boombThree))
+    
+    assertTrue("start put pair seqeunce",roomActorRef.underlyingActor.matchPutCardRule(emptyCards, pairSequenceFiveToSeven))
+    assertTrue("pair sequence 7 to 9 is greater than pair sequence f to 7",roomActorRef.underlyingActor.matchPutCardRule(pairSequenceFiveToSeven, pairSequenceSevenToNine))
   }
 
   @Test

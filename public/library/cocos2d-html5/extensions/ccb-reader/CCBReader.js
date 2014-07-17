@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -935,6 +935,8 @@ cc.BuilderReader = cc.Class.extend({
         if (this._currentBit >= 8) {
             this._currentBit = 0;
             this._currentByte++;
+            if(this._currentByte > this._data.length)
+                throw "out of the data bound";
         }
 
         return bit;

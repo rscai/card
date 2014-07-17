@@ -30,7 +30,6 @@ object AuthenticationFilter extends Filter with Logging{
       val result = next(request)
       result
     } else {
-
       // check whether authenticated
       request.session.get("expire").map { expire =>
         // validate expire

@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -84,7 +85,7 @@ ccs.ANIMATION_TYPE_MAX = 2;
  * @property {Boolean}  playing             - <@readonly> Indicate whether the process is playing
  */
 ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
-    processScale: 1,
+    _processScale: 1,
     _isComplete: true,
     _isPause: true,
     _isPlaying: false,
@@ -99,7 +100,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     _curFrameIndex: null,
     _isLoopBack: false,
     ctor: function () {
-        this.processScale = 1;
+        this._processScale = 1;
         this._isComplete = true;
         this._isPause = true;
         this._isPlaying = false;
@@ -171,7 +172,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
              *  dt/this.animationInternal determine it is not a frame animation. If frame speed changed, it will not make our
              *  animation speed slower or quicker.
              */
-            locCurrentFrame += this.processScale * (dt / this.animationInternal);
+            locCurrentFrame += this._processScale * (dt / this.animationInternal);
 
             this._currentPercent = locCurrentFrame / locNextFrameIndex;
 
@@ -288,7 +289,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
      * @returns {number}
      */
     getProcessScale: function () {
-        return this.processScale;
+        return this._processScale;
     },
 
     /**
@@ -296,7 +297,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
      * @param processScale
      */
     setProcessScale: function (processScale) {
-        this.processScale = processScale;
+        this._processScale = processScale;
     },
 
     /**

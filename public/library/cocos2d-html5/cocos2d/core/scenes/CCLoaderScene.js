@@ -1,7 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
- Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -32,17 +31,14 @@ cc.LoaderScene = cc.Scene.extend({
     _className:"LoaderScene",
     init : function(){
         var self = this;
-        var winSize = cc.director.getWinSize();
-
 
         //logo
         var logoWidth = 160;
         var logoHeight = 200;
-        var centerPos = cc.p(winSize.width / 2, winSize.height / 2);
 
         // bg
         var bgLayer = self._bgLayer = cc.LayerColor.create(cc.color(32, 32, 32, 255));
-        bgLayer.setPosition(0, 0);
+        bgLayer.setPosition(cc.visibleRect.bottomLeft);
         self.addChild(bgLayer, 0);
 
         //image move to CCSceneFile.js
@@ -52,14 +48,14 @@ cc.LoaderScene = cc.Scene.extend({
             cc.loader.loadImg(cc._loaderImage, {isCrossOrigin : false }, function(err, img){
                 logoWidth = img.width;
                 logoHeight = img.height;
-                self._initStage(img, centerPos);
+                self._initStage(img, cc.visibleRect.center);
             });
             fontSize = 14;
             lblHeight = -logoHeight / 2 - 10;
         }
         //loading percent
         var label = self._label = cc.LabelTTF.create("Loading... 0%", "Arial", fontSize);
-        label.setPosition(cc.pAdd(centerPos, cc.p(0, lblHeight)));
+        label.setPosition(cc.pAdd(cc.visibleRect.center, cc.p(0, lblHeight)));
         label.setColor(cc.color(180, 180, 180));
         bgLayer.addChild(this._label, 10);
         return true;
@@ -105,8 +101,10 @@ cc.LoaderScene = cc.Scene.extend({
         self.unschedule(self._startLoading);
         var res = self.resources;
         self._length = res.length;
+        self._count = 0;
         cc.loader.load(res, function(result, count){ self._count = count; }, function(){
-            self.cb();
+            if(self.cb)
+                self.cb();
         });
         self.schedule(self._updatePercent);
     },

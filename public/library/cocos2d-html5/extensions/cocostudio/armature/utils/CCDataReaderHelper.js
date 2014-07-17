@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -143,7 +144,8 @@ ccs.DataInfo = function () {
 };
 
 /**
- * @namespace CocoStudio data reader helper
+ * CocoStudio data reader helper
+ * @namespace ccs.dataReaderHelper
  */
 ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
     _configFileList: [],

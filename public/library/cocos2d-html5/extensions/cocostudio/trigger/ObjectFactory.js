@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2013 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -40,7 +41,38 @@ ccs.objectFactory = {
 
     registerType: function (t) {
         this._typeMap[t._className] = t;
+    },
+
+    createGUI: function(name){
+        var object = null;
+        if(name === "Panel"){
+            name = "Layout";
+        }else if(name === "TextArea"){
+            name = "Label";
+        }else if(name === "TextButton"){
+            name = "Button";
+        }
+
+        var t = this._typeMap[name];
+        if(t && t._fun){
+            object = t._fun;
+        }
+
+        return object;
+    },
+
+    createWidgetReaderProtocol: function(name){
+        var object = null;
+
+        var t = this._typeMap[name];
+        if(t && t._fun){
+            object = t._fun;
+        }
+
+        return object;
     }
+
+
 };
 
 ccs.TInfo = ccs.Class.extend({

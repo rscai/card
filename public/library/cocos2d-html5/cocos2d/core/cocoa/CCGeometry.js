@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -274,11 +274,12 @@ cc.rectContainsPoint = function (rect, point) {
  * @param {cc.Rect} rectB
  * @return {Boolean}
  */
-cc.rectIntersectsRect = function (rectA, rectB) {
-    return !(cc.rectGetMaxX(rectA) < cc.rectGetMinX(rectB) ||
-        cc.rectGetMaxX(rectB) < cc.rectGetMinX(rectA) ||
-        cc.rectGetMaxY(rectA) < cc.rectGetMinY(rectB) ||
-        cc.rectGetMaxY(rectB) < cc.rectGetMinY(rectA));
+cc.rectIntersectsRect = function (ra, rb) {
+    var maxax = ra.x + ra.width,
+        maxay = ra.y + ra.height,
+        maxbx = rb.x + rb.width,
+        maxby = rb.y + rb.height;
+    return !(maxax < rb.x || maxbx < ra.x || maxay < rb.y || maxby < ra.y);
 };
 
 /**

@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -539,7 +539,13 @@ cc.BuilderAnimationManager = cc.Class.extend({
                 // TODO only handle rotation, opacity, displayFrame, color
                 if(propName === "rotation"){
                     node.setRotation(value);
-                } else if(propName === "opacity"){
+                }  else if(propName == "rotationX")
+                {
+                    node.setRotationSkewX(value);
+                }else if(propName == "rotationY")
+                {
+                    node.setRotationSkewY(value);
+                }else if(propName === "opacity"){
                     node.setOpacity(value);
                 } else if(propName === "displayFrame"){
                     node.setSpriteFrame(value);

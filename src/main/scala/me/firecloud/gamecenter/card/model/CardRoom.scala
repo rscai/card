@@ -25,6 +25,7 @@ import me.firecloud.gamecenter.model.PlayerPropertyChange
 import me.firecloud.gamecenter.model.RoomDescription
 import me.firecloud.gamecenter.dao.Update
 import me.firecloud.gamecenter.dao.PlayerDao
+import me.firecloud.gamecenter.dao.Delete
 
 /**
  * @author kkppccdd
@@ -193,7 +194,7 @@ class CardRoom(id: String, name: String, seatNum: Int) extends Room(id, "card", 
   }
 
   when(StartPutCard) {
-    case Event(PutCard(userId, cards), Uninitialized) if defaultCycle.onturn(userId) && matchPutCardRule(lastAppendSeat.putCards, cards)=>
+    case Event(PutCard(userId, cards), Uninitialized) if defaultCycle.onturn(userId) && matchPutCardRule(List[Card](), cards)=>
       // 1. perform action and notify state changes
       debug(userId + " put cards " + cards.size)
       cards.foreach(card => {
@@ -361,6 +362,13 @@ class CardRoom(id: String, name: String, seatNum: Int) extends Room(id, "card", 
   protected def end: Unit = {
     val endMsg = new EndGame(Dealer.id)
     notifyAll(endMsg)
+    
+    // close room actor
+    // report status to supervisor
+    context.parent ! new Delete(this.id)
+    
+    // 
+    context.stop(self)
   }
 
   protected def reportStatus: Unit = {
@@ -414,6 +422,7 @@ class CardRoom(id: String, name: String, seatNum: Int) extends Room(id, "card", 
     (previousCards, putCards) => empty(previousCards) && sequence(putCards) != null,
     (previousCards,putCards)=>empty(previousCards) && pairSequence(putCards) !=null,
     (previousCards,putCards)=>empty(previousCards) && tripleSequence(putCards) !=null,
+    (previousCards,putCards)=>empty(previousCards) && tripleWithPair(putCards) !=null,
     
     (previousCards, putCards) => (single(previousCards).point+10) % 13 < (single(putCards).point+10) % 13,
     (previousCards, putCards) => (pair(previousCards).point+10) % 13 < (pair(putCards).point+10) % 13,
@@ -588,7 +597,7 @@ class CardRoom(id: String, name: String, seatNum: Int) extends Room(id, "card", 
       val keyList = groupedCards.keySet.toList
       val sortedKeyList =keyList.sortWith((leftPoint,rightPoint)=>pointOffset(leftPoint)<pointOffset(rightPoint))
       
-      if(pointOffset(sortedKeyList.last) - pointOffset(sortedKeyList.head) == sortedKeyList.size){
+      if(pointOffset(sortedKeyList.last) - pointOffset(sortedKeyList.head) == sortedKeyList.size-1){
         sortedKeyList.map(key=>groupedCards.get(key).get(0))
       }else{
         throw new Unmatched()
@@ -607,7 +616,7 @@ class CardRoom(id: String, name: String, seatNum: Int) extends Room(id, "card", 
       val keyList = groupedCards.keySet.toList
       val sortedKeyList =keyList.sortWith((leftPoint,rightPoint)=>pointOffset(leftPoint)<pointOffset(rightPoint))
       
-      if(pointOffset(sortedKeyList.last) - pointOffset(sortedKeyList.head) == sortedKeyList.size){
+      if(pointOffset(sortedKeyList.last) - pointOffset(sortedKeyList.head) == sortedKeyList.size-1){
         sortedKeyList.map(key=>groupedCards.get(key).get(0))
       }else{
         throw new Unmatched()

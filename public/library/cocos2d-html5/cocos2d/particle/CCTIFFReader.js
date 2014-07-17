@@ -2,7 +2,10 @@
  Copyright (c) 2011 Gordon P. Hemsley
  http://gphemsley.org/
 
- Copyright (c) 2010-2013 cocos2d-x.org
+ Copyright (c) 2008-2010 Ricardo Quesada
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
+
  http://www.cocos2d-x.org
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,9 +27,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
 /**
- * @namespace A tiff file reader, it can parse byte array to draw into a canvas
+ * @namespace cc.tiffReader
+ * A tiff file reader, it can parse byte array to draw into a canvas
  */
 cc.tiffReader = /** @lends cc.tiffReader# */{
     _littleEndian: false,

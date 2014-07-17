@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2013 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
  Copyright (c) 2012 Pierre-David Bélanger
 
  http://www.cocos2d-x.org
@@ -66,7 +66,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     /**
      * Creates and initializes a clipping node with an other node as its stencil.
      * The stencil node will be retained.
-     * @constructor
+     * Constructor of cc.ClippingNode
      * @param {cc.Node} [stencil=null]
      */
     ctor: function (stencil) {
@@ -311,10 +311,10 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         }
 
         var context = ctx || cc._renderContext;
+        var canvas = context.canvas;
         // Composition mode, costy but support texture stencil
         if (this._cangodhelpme() || this._stencil instanceof cc.Sprite) {
             // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
-            var canvas = context.canvas;
             var locCache = cc.ClippingNode._getSharedCache();
             locCache.width = canvas.width;
             locCache.height = canvas.height;
@@ -346,6 +346,19 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
             context.save();
             this.transform(context);
             this._stencil.visit(context);
+            if (this.inverted) {
+                context.save();
+
+                context.setTransform(1, 0, 0, 1, 0, 0);
+
+                context.moveTo(0, 0);
+                context.lineTo(0, canvas.height);
+                context.lineTo(canvas.width, canvas.height);
+                context.lineTo(canvas.width, 0);
+                context.lineTo(0, 0);
+
+                context.restore();
+            }
             context.clip();
 
             // Clip mode doesn't support recusive stencil, so once we used a clip stencil,
@@ -395,7 +408,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
     _setStencilForCanvas: function (stencil) {
         this._stencil = stencil;
-        var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
         var locContext = cc._renderContext;
         // For texture stencil, use the sprite itself
         if (stencil instanceof cc.Sprite) {
@@ -404,11 +416,16 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         // For shape stencil, rewrite the draw of stencil ,only init the clip path and draw nothing.
         else if (stencil instanceof cc.DrawNode) {
             stencil.draw = function () {
+                var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
+                locContext.beginPath();
                 for (var i = 0; i < stencil._buffer.length; i++) {
                     var element = stencil._buffer[i];
                     var vertices = element.verts;
+
+                    //cc.assert(cc.vertexListIsClockwise(vertices),
+                    //    "Only clockwise polygons should be used as stencil");
+
                     var firstPoint = vertices[0];
-                    locContext.beginPath();
                     locContext.moveTo(firstPoint.x * locEGL_ScaleX, -firstPoint.y * locEGL_ScaleY);
                     for (var j = 1, len = vertices.length; j < len; j++)
                         locContext.lineTo(vertices[j].x * locEGL_ScaleX, -vertices[j].y * locEGL_ScaleY);

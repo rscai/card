@@ -768,45 +768,30 @@ var SelfSeat = Seat.extend({
 
 		// construct buttons
 		var theSelfSeat = this;
+		
 		// construct put card button
-		var putCardBn = ccui.Button.create();
-		putCardBn.loadTextures(RES.image.button, RES.image.button, "");
-		putCardBn.setTitleText("出牌");
-		putCardBn.setTitleFontSize(40);
-		putCardBn.addTouchEventListener(function(sender, type) {
-			switch (type) {
-			case ccui.Widget.TOUCH_BEGAN:
-				console.debug("Touch Down");
-				break;
+		var putCardText=cc.LabelTTF.create("出牌", "Marker Felt",60);
+		var putCardBnBackground=cc.Scale9Sprite.create(RES.image.button);
+		
+		var putCardBn = cc.ControlButton.create(putCardText, putCardBnBackground);
+		
+		// add event handler
+		putCardBn.addTargetWithActionForControlEvents(this,function (sender, controlEvent){
+			console.debug("Put card Button down");
+			// construct put card message and send
 
-			case ccui.Widget.TOUCH_MOVED:
-				console.debug("Touch Move");
-				break;
+			var handCardDock = theSelfSeat
+					.getChildByTag(theSelfSeat.tags.handCardDock);
+			var selectedCards = handCardDock.getSelected();
 
-			case ccui.Widget.TOUCH_ENDED:
-				// construct put card message and send
+			var putCardMsg = new PutCard(fc.self.id, selectedCards);
 
-				var handCardDock = theSelfSeat
-						.getChildByTag(theSelfSeat.tags.handCardDock);
-				var selectedCards = handCardDock.getSelected();
+			fc.room.send(putCardMsg);
 
-				var putCardMsg = new PutCard(fc.self.id, selectedCards);
-
-				fc.room.send(putCardMsg);
-
-				break;
-
-			case ccui.Widget.TOUCH_CANCELED:
-				console.debug("Touch Cancelled");
-				break;
-
-			default:
-				break;
-			}
-		}, putCardBn);
-
+		}, cc.CONTROL_EVENT_TOUCH_DOWN);
+		
+		putCardBn.setEnabled(false);
 		putCardBn.setVisible(false);
-		putCardBn.setTouchEnabled(false);
 
 		putCardBn.setAnchorPoint(new cc.Point(0, 0));
 		putCardBn.setPosition(new cc.Point(128, 240));
@@ -815,86 +800,55 @@ var SelfSeat = Seat.extend({
 
 		// construct append card button
 
-		var appendCardBn = ccui.Button.create();
-		appendCardBn.loadTextures(RES.image.button, RES.image.button, "");
-		appendCardBn.setTitleText("出牌");
-		appendCardBn.setTitleFontSize(40);
-		appendCardBn.addTouchEventListener(function(sender, type) {
-			switch (type) {
-			case ccui.Widget.TOUCH_BEGAN:
-				console.debug("Touch Down");
-				break;
+		var appendCardText=cc.LabelTTF.create("出牌", "Marker Felt",60);
+		var appendCardBnBackground=cc.Scale9Sprite.create(RES.image.button);
+		
+		var appendCardBn = cc.ControlButton.create(appendCardText, appendCardBnBackground);
+		
+		// add event handler
+		appendCardBn.addTargetWithActionForControlEvents(this,function (sender, controlEvent){
+			console.debug("Append card Button down");
+			// construct put card message and send
 
-			case ccui.Widget.TOUCH_MOVED:
-				console.debug("Touch Move");
-				break;
+			var handCardDock = theSelfSeat
+					.getChildByTag(theSelfSeat.tags.handCardDock);
+			var selectedCards = handCardDock.getSelected();
 
-			case ccui.Widget.TOUCH_ENDED:
-				// construct put card message and send
+			var appendCardMsg = new AppendCard(fc.self.id, selectedCards);
 
-				var handCardDock = theSelfSeat
-						.getChildByTag(theSelfSeat.tags.handCardDock);
-				var selectedCards = handCardDock.getSelected();
+			fc.room.send(appendCardMsg);
 
-				var appendCardMsg = new AppendCard(fc.self.id, selectedCards);
-
-				fc.room.send(appendCardMsg);
-
-				break;
-
-			case ccui.Widget.TOUCH_CANCELED:
-				console.debug("Touch Cancelled");
-				break;
-
-			default:
-				break;
-			}
-		}, appendCardBn);
-
+		}, cc.CONTROL_EVENT_TOUCH_DOWN);
+		
+		
+		appendCardBn.setEnabled(false);
 		appendCardBn.setVisible(false);
-		appendCardBn.setTouchEnabled(false);
-
+		
 		appendCardBn.setAnchorPoint(new cc.Point(0, 0));
 		appendCardBn.setPosition(new cc.Point(128, 240));
 
 		this.addChild(appendCardBn, 0, this.tags.appendCardButton);
 
 		// construct pass button
+		var passText=cc.LabelTTF.create("不出", "Marker Felt",60);
+		var passBnBackground=cc.Scale9Sprite.create(RES.image.button);
 
-		var passBn = ccui.Button.create();
-		passBn.loadTextures(RES.image.button, RES.image.button, "");
-		passBn.setTitleText("不出");
-		passBn.setTitleFontSize(40);
-		passBn.addTouchEventListener(function(sender, type) {
-			switch (type) {
-			case ccui.Widget.TOUCH_BEGAN:
-				console.debug("Touch Down");
-				break;
+		var passBn = cc.ControlButton.create(passText, passBnBackground);
 
-			case ccui.Widget.TOUCH_MOVED:
-				console.debug("Touch Move");
-				break;
+		
+		// add event handler
+		passBn.addTargetWithActionForControlEvents(this,function (sender, controlEvent){
+			console.debug("Pass Button down");
+			// construct pass message and send
 
-			case ccui.Widget.TOUCH_ENDED:
-				// construct pass message and send
+			var passMsg = new Pass(fc.self.id);
 
-				var passMsg = new Pass(fc.self.id);
+			fc.room.send(passMsg);
 
-				fc.room.send(passMsg);
-
-				break;
-
-			case ccui.Widget.TOUCH_CANCELED:
-				console.debug("Touch Cancelled");
-				break;
-
-			default:
-				break;
-			}
-		}, passBn);
-
+		}, cc.CONTROL_EVENT_TOUCH_DOWN);
+		
+		passBn.setEnabled(false);
 		passBn.setVisible(false);
-		passBn.setTouchEnabled(false);
 
 		passBn.setAnchorPoint(new cc.Point(0, 0));
 		passBn.setPosition(new cc.Point(296, 240));
@@ -1653,6 +1607,9 @@ fc["room"] = {
 			// show result
 			// TODO
 			alert("Game Over");
+			
+			// goto hall
+			window.location="/";
 		}
 
 		// ask handler
@@ -1785,7 +1742,7 @@ fc["room"] = {
 						.getChildByTag(selfSeat.tags.putCardButton);
 
 				putCardBt.setVisible(true);
-				putCardBt.setTouchEnabled(true);
+				putCardBt.setEnabled(true);
 
 			},
 			disable : function() {
@@ -1794,7 +1751,7 @@ fc["room"] = {
 						.getChildByTag(selfSeat.tags.putCardButton);
 
 				putCardBt.setVisible(false);
-				putCardBt.setTouchEnabled(true);
+				putCardBt.setEnabled(true);
 			}
 		};
 
@@ -1808,7 +1765,7 @@ fc["room"] = {
 						.getChildByTag(selfSeat.tags.appendCardButton);
 
 				appendCardBt.setVisible(true);
-				appendCardBt.setTouchEnabled(true);
+				appendCardBt.setEnabled(true);
 			},
 			disable : function() {
 				var selfSeat = fc.room.lookupSeat(fc.self.id);
@@ -1816,7 +1773,7 @@ fc["room"] = {
 						.getChildByTag(selfSeat.tags.appendCardButton);
 
 				appendCardBt.setVisible(false);
-				appendCardBt.setTouchEnabled(false);
+				appendCardBt.setEnabled(false);
 			}
 		};
 
@@ -1828,14 +1785,14 @@ fc["room"] = {
 				var passBt = selfSeat.getChildByTag(selfSeat.tags.passButton);
 
 				passBt.setVisible(true);
-				passBt.setTouchEnabled(true);
+				passBt.setEnabled(true);
 			},
 			disable : function() {
 				var selfSeat = fc.room.lookupSeat(fc.self.id);
 				var passBt = selfSeat.getChildByTag(selfSeat.tags.passButton);
 
 				passBt.setVisible(false);
-				passBt.setTouchEnabled(false);
+				passBt.setEnabled(false);
 			}
 		};
 

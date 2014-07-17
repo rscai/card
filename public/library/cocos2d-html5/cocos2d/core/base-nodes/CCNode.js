@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -174,6 +174,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _rotationRadiansY: 0,
     _className: "Node",
     _showNode: false,
+    _name: "",                     ///<a string label, an user defined string to identify this node
 
     _initNode: function () {
         var _t = this;
@@ -945,6 +946,22 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
+     * Changes the name that is used to identify the node easily.
+     * @param {String} name
+     */
+    setName: function(name){
+         this._name
+    },
+
+    /**
+     * Returns a string that is used to identify the node.
+     * @returns {string} A string that identifies the node.
+     */
+    getName: function(){
+        return this._name;
+    },
+
+    /**
      * <p>
      *     Returns a custom user data pointer                                                               <br/>
      *     You can set everything in UserData pointer, a data block, a structure or an object.
@@ -1109,7 +1126,20 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                     return node;
             }
         }
-        //throw "not found";
+        return null;
+    },
+
+    getChildByName: function(name){
+        if(!name){
+            cc.log("Invalid name");
+            return null;
+        }
+
+        var locChildren = this._children;
+        for(var i = 0, len = locChildren.length; i < len; i++){
+           if(locChildren[i]._name == name)
+            return locChildren[i];
+        }
         return null;
     },
     // composition: ADD
@@ -1318,22 +1348,25 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     sortAllChildren: function () {
         if (this._reorderChildDirty) {
             var _children = this._children;
-            var i, j, length = _children.length, tempChild;
 
             // insertion sort
-            for (i = 0; i < length; i++) {
-                var tempItem = _children[i];
+            var len = _children.length, i, j, tmp;
+            for(i=1; i<len; i++){
+                tmp = _children[i];
                 j = i - 1;
-                tempChild = _children[j];
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
-                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.arrivalOrder < tempChild.arrivalOrder ))) {
-                    _children[j + 1] = tempChild;
-                    j = j - 1;
-                    tempChild = _children[j];
+                while(j >= 0){
+                    if(tmp._localZOrder < _children[j]._localZOrder){
+                        _children[j+1] = _children[j];
+                    }else if(tmp._localZOrder === _children[j]._localZOrder && tmp.arrivalOrder < _children[j].arrivalOrder){
+                        _children[j+1] = _children[j];
+                    }else{
+                        break;
+                    }
+                    j--;
                 }
-                _children[j + 1] = tempItem;
+                _children[j+1] = tmp;
             }
 
             //don't need to check children recursively, that's done in visit of each child
@@ -1717,6 +1750,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     convertToWorldSpace: function (nodePoint) {
+        nodePoint = nodePoint || cc.p(0,0);
         return cc.PointApplyAffineTransform(nodePoint, this.nodeToWorldTransform());
     },
 
@@ -1737,6 +1771,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     convertToWorldSpaceAR: function (nodePoint) {
+        nodePoint = nodePoint || cc.p(0,0);
         var pt = cc.pAdd(nodePoint, this._anchorPointInPoints);
         return this.convertToWorldSpace(pt);
     },
@@ -1865,8 +1900,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this._cacheDirty = true;
 
             var cachedP = this._cachedParent;
+            //var cachedP = this._parent;
             cachedP && cachedP != this && cachedP._setNodeDirtyForCache();
         }
+    },
+
+    _setCachedParent: function(cachedParent){
+        if(this._cachedParent ==  cachedParent)
+            return;
+
+        this._cachedParent = cachedParent;
+        var children = this._children;
+        for(var i = 0, len = children.length; i < len; i++)
+            children[i]._setCachedParent(cachedParent);
     },
 
     /**
@@ -1946,7 +1992,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var trans = this.nodeToWorldTransform();
         rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
-        //rect = cc.rect(0 | rect.x - 4, 0 | rect.y - 4, 0 | rect.width + 8, 0 | rect.height + 8);
 
         //query child's BoundingBox
         if (!this._children)
@@ -1984,6 +2029,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
         return rect;
     },
+
     _nodeToParentTransformForWebGL: function () {
         var _t = this;
         if (_t._transformDirty) {
@@ -2113,6 +2159,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         } else
             _t.draw(context);
 
+        this._cacheDirty = false;
         _t.arrivalOrder = 0;
         context.restore();
     };
@@ -2159,6 +2206,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 // offset the anchorpoint
                 var skx = Math.tan(-_t._skewX * Math.PI / 180);
                 var sky = Math.tan(-_t._skewY * Math.PI / 180);
+                if(skx === Infinity){
+                    skx = 99999999;
+                }
+                if(sky === Infinity){
+                    sky = 99999999;
+                }
                 var xx = appY * skx * sx;
                 var yy = appX * sky * sy;
                 t.a = Cos + -Sin * sky;
@@ -2200,11 +2253,13 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p = null;
 
 } else {
-    _tmp.WebGLCCNode();
-    delete _tmp.WebGLCCNode;
+    cc.assert(typeof cc._tmp.WebGLCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesWebGL.js");
+    cc._tmp.WebGLCCNode();
+    delete cc._tmp.WebGLCCNode;
 }
-_tmp.PrototypeCCNode();
-delete _tmp.PrototypeCCNode;
+cc.assert(typeof cc._tmp.PrototypeCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
+cc._tmp.PrototypeCCNode();
+delete cc._tmp.PrototypeCCNode;
 
 
 /**
@@ -2244,6 +2299,10 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         this._realColor = cc.color(255, 255, 255, 255);
         this._cascadeColorEnabled = false;
         this._cascadeOpacityEnabled = false;
+    },
+
+    _updateColor: function(){
+        //TODO
     },
 
     /**
@@ -2348,7 +2407,8 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
      * @returns {cc.Color}
      */
     getDisplayedColor: function () {
-        return this._displayedColor;
+        var tmpColor = this._displayedColor;
+        return cc.color(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a);
     },
 
     /**
@@ -2467,8 +2527,9 @@ cc.NodeRGBA.create = function () {
     return res;
 };
 
-_tmp.PrototypeCCNodeRGBA();
-delete _tmp.PrototypeCCNodeRGBA;
+cc.assert(typeof cc._tmp.PrototypeCCNodeRGBA === "function", cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
+cc._tmp.PrototypeCCNodeRGBA();
+delete cc._tmp.PrototypeCCNodeRGBA;
 
 /**
  * Node on enter

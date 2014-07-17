@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -24,8 +24,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
+cc._tmp.DirectorWebGL = function () {
 
     /**
      * OpenGL projection protocol
@@ -36,7 +36,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         /**
          * Called by CCDirector when the projection is updated, and "custom" projection is used
          */
-        updateProjection:function () {
+        updateProjection: function () {
         }
     });
 
@@ -47,6 +47,10 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         var size = _t._winSizeInPoints;
 
         _t.setViewport();
+
+        var view = _t._openGLView,
+            ox = view._viewPortRect.x / view._scaleX,
+            oy = view._viewPortRect.y / view._scaleY;
 
         switch (projection) {
             case cc.Director.PROJECTION_2D:
@@ -71,8 +75,8 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
                 cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
                 cc.kmGLLoadIdentity();
-                var eye = cc.kmVec3Fill(null, size.width / 2, size.height / 2, zeye);
-                var center = cc.kmVec3Fill(null, size.width / 2, size.height / 2, 0.0);
+                var eye = cc.kmVec3Fill(null, -ox + size.width / 2, -oy + size.height / 2, zeye);
+                var center = cc.kmVec3Fill(null, -ox + size.width / 2, -oy + size.height / 2, 0.0);
                 var up = cc.kmVec3Fill(null, 0.0, 1.0, 0.0);
                 cc.kmMat4LookAt(matrixLookup, eye, center, up);
                 cc.kmGLMultMatrix(matrixLookup);
@@ -92,7 +96,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
     _p.setDepthTest = function (on) {
 
-        var loc_gl= cc._renderContext;
+        var loc_gl = cc._renderContext;
         if (on) {
             loc_gl.clearDepth(1.0);
             loc_gl.enable(loc_gl.DEPTH_TEST);
@@ -133,29 +137,31 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
          }*/
 
         //}
-        if(cc.eventManager)
+        if (cc.eventManager)
             cc.eventManager.setEnabled(true);
     };
 
-    _p._clear = function() {
+    _p._clear = function () {
         var gl = cc._renderContext;
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     };
 
-    _p._beforeVisitScene = function() {
+    _p._beforeVisitScene = function () {
         cc.kmGLPushMatrix();
     };
 
-    _p._afterVisitScene = function() {
+    _p._afterVisitScene = function () {
         cc.kmGLPopMatrix();
     };
 
-    _p._createStatsLabel = function(){
+    _p._createStatsLabel = function () {
         var _t = this;
-        if(!cc.LabelAtlas)
-            return _t._createStatsLabelForCanvas();
+        if (!cc.LabelAtlas){
+            _t._createStatsLabelForCanvas();
+            return
+        }
 
-        if((cc.Director._fpsImageLoaded == null) || (cc.Director._fpsImageLoaded == false))
+        if ((cc.Director._fpsImageLoaded == null) || (cc.Director._fpsImageLoaded == false))
             return;
 
         var texture = new cc.Texture2D();
@@ -176,12 +182,12 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
          a factor of design resolution ratio of 480x320 is also needed.
          */
         var factor = cc.view.getDesignResolutionSize().height / 320.0;
-        if(factor === 0)
+        if (factor === 0)
             factor = _t._winSizeInPoints.height / 320.0;
 
         var tmpLabel = new cc.LabelAtlas();
         tmpLabel._setIgnoreContentScaleFactor(true);
-        tmpLabel.initWithString("00.0", texture, 12, 32 , '.');
+        tmpLabel.initWithString("00.0", texture, 12, 32, '.');
         tmpLabel.scale = factor;
         _t._FPSLabel = tmpLabel;
 
@@ -203,7 +209,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         _t._FPSLabel.setPosition(locStatsPosition);
     };
 
-    _p._createStatsLabelForCanvas = function(){
+    _p._createStatsLabelForCanvas = function () {
         var _t = this;
         //The original _createStatsLabelForCanvas method
         //Because the referenced by a cc.Director.prototype._createStatsLabel
@@ -273,8 +279,6 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     };
 
 
-
-
     _p.getVisibleSize = function () {
         //if (this._openGLView) {
         return this._openGLView.getVisibleSize();
@@ -298,10 +302,11 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     /**
      * Sets the glViewport
      */
-    _p.setViewport = function(){
-        if(this._openGLView) {
+    _p.setViewport = function () {
+        var view = this._openGLView;
+        if (view) {
             var locWinSizeInPoints = this._winSizeInPoints;
-            this._openGLView.setViewPortInPoints(0,0, locWinSizeInPoints.width, locWinSizeInPoints.height);
+            view.setViewPortInPoints(-view._viewPortRect.x/view._scaleX, -view._viewPortRect.y/view._scaleY, locWinSizeInPoints.width, locWinSizeInPoints.height);
         }
     };
 

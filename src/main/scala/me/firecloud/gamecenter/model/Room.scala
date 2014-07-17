@@ -17,6 +17,7 @@ import me.firecloud.gamecenter.dao.Update
 import me.firecloud.gamecenter.dao.Get
 import me.firecloud.gamecenter.dao.GameDao
 import me.firecloud.gamecenter.dao.PlayerDao
+import me.firecloud.gamecenter.dao.Delete
 
 /**
  * @author kkppccdd
@@ -173,6 +174,9 @@ class RoomSupervisor extends Actor with Logging {
           sender ! None
         }
       }
+    case Delete(roomId)=>
+      freeRooms.remove(roomId);
+      runningRooms.remove(roomId)
     case _ =>
       error("unsupported message")
   }

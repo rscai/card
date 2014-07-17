@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -364,7 +364,7 @@ cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.Transiti
         pNode.barChangeRate = cc.p(1, 1);
 
         pNode.percentage = 100;
-        this._setAttrs(pNode, winSize.width / 2, winSize.height / 2);
+        this._setAttrs(pNode, size.width / 2, size.height / 2);
 
         return pNode;
     }

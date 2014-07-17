@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -25,9 +25,9 @@
  ****************************************************************************/
 
 /**
- * @namespace The fullscreen API provides an easy way for web content to be presented using the user's entire screen.
+ * @namespace cc.screen
+ * The fullscreen API provides an easy way for web content to be presented using the user's entire screen.
  * It's invalid on safari,QQbrowser and android browser
- * @name cc.screen
  */
 cc.screen = /** @lends cc.screen# */{
     _supportsFullScreen: false,

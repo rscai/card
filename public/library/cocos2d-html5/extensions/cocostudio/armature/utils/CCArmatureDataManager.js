@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -34,7 +35,8 @@ ccs.RelativeData = function(){
 };
 
 /**
- * @namespace Format and manage armature configuration and armature animation
+ * Format and manage armature configuration and armature animation
+ * @namespace ccs.armatureDataManager
  */
 ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
     _animationDatas: {},
@@ -88,7 +90,7 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
      */
     removeArmatureData:function(id){
         if (this._armarureDatas[id])
-           delete this._armarureDatas[id];
+            delete this._armarureDatas[id];
     },
 
     /**
@@ -289,14 +291,14 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
         return this._relativeDatas[configFilePath];
     },
 
-	/**
-	 * Clear data
-	 */
-	clear: function() {
+    /**
+     * Clear data
+     */
+    clear: function() {
         this._animationDatas = {};
         this._armarureDatas = {};
         this._textureDatas = {};
         ccs.spriteFrameCacheHelper.clear();
         ccs.dataReaderHelper.clear();
-	}
+    }
 };

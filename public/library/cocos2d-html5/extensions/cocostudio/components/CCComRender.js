@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -33,6 +34,7 @@ ccs.ComRender = ccs.Component.extend(/** @lends ccs.ComRender# */{
         cc.Component.prototype.ctor.call(this);
         this._render = node;
         this._name = comName;
+        this.isRenderer = true;
     },
 
     onEnter: function () {

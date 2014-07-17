@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2014 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -100,7 +101,8 @@ cc.__getListenerID = function (event) {
 };
 
 /**
- * @namespace<p>
+ * @namespace cc.eventManager
+ * <p>
  *  This class manages event listener subscriptions and event dispatching.                                      <br/>
  *                                                                                                              <br/>
  *  The EventListener list is managed in such a way that event listeners can be added and removed even          <br/>
@@ -382,7 +384,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
     _updateListeners: function (event) {
         var locInDispatch = this._inDispatch;
-        cc.assert(locInDispatch > 0, "If program goes here, there should be event in dispatch.");
+        cc.assert(locInDispatch > 0, cc._LogInfos.EventManager__updateListeners);
         if (event.getType() == cc.Event.TOUCH) {
             this._onUpdateListeners(cc._EventListenerTouchOneByOne.LISTENER_ID);
             this._onUpdateListeners(cc._EventListenerTouchAllAtOnce.LISTENER_ID);
@@ -392,7 +394,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
         if(locInDispatch > 1)
             return;
 
-        cc.assert(locInDispatch == 1, "_inDispatch should be 1 here.");
+        cc.assert(locInDispatch == 1, cc._LogInfos.EventManager__updateListeners_2);
         var locListenersMap = this._listenersMap, locPriorityDirtyFlagMap = this._priorityDirtyFlagMap;
         for (var selKey in locListenersMap) {
             if (locListenersMap[selKey].empty()) {
@@ -652,18 +654,15 @@ cc.eventManager = /** @lends cc.eventManager# */{
      *         except calls removeAllListeners().
      */
     addListener: function (listener, nodeOrPriority) {
-
         cc.assert(listener && nodeOrPriority, cc._LogInfos.eventManager_addListener_2);
-
         if(!(listener instanceof cc.EventListener)){
-
             cc.assert(typeof nodeOrPriority !== "number", cc._LogInfos.eventManager_addListener_3);
-
             listener = cc.EventListener.create(listener);
-        } else{
-
-            cc.assert(!listener._isRegistered(), cc._LogInfos.eventManager_addListener_4);
-
+        } else {
+            if(listener._isRegistered()){
+                cc.log(cc._LogInfos.eventManager_addListener_4);
+                return;
+            }
         }
 
         if (!listener.checkAvailable())
