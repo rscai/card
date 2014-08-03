@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<game category="card" xmlns="http://gamecenter.firecloud.me">
+	<states>
+		<state>OnBet</state>
+		<state>OnStartPutCard</state>
+		<state>OnAppendCard</state>
+	</states>
+	<functions>
+		<function>
+		<![CDATA[
+		def pointOffset(point:Int):Int=(point+10) %13
+		]]>
+		</function>
+	</functions>
+	<cardComparisonRuleSet>
+		<cardComparisonRule>
+		<![CDATA[
+			empty(left) && single(right)
+		]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+		<![CDATA[
+			empty(left) && pair(right)
+		]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+		<![CDATA[
+			empty(left) && triple(right)
+		]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+		<![CDATA[
+			empty(left) && quads(right)
+		]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+		<![CDATA[
+			empty(left) && sequence(right)
+		]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+		<![CDATA[
+			empty(left) && pairSequence(right)
+		]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+		<![CDATA[
+			empty(left) && tripleSequence(right)
+		]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+		<![CDATA[
+			empty(left) && tripleWithPair(right)
+		]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+		<![CDATA[
+			(single(left).point+10) % 13 < (single(right).point+10) % 13
+		]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+		<![CDATA[
+			(pair(left).point+10) % 13 < (pair(right).point+10) % 13
+		]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+		<![CDATA[
+			(triple(left).point+10) % 13 < (triple(right).point+10) % 13
+		]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+	<![CDATA[
+		val previousCombin=tripleWithPair(left)
+      val putCombin=tripleWithPair(right)
+      
+      if(pointOffset(previousCombin._1.point) < pointOffset(putCombin._1.point) && pointOffset(previousCombin._2.point) < pointOffset(putCombin._2.point)){
+        true
+      }else{
+        false
+      }
+      ]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+	<![CDATA[
+	val previousSequence = sequence(left)
+      val putSequence = sequence(right)
+      if(previousSequence.size == putSequence.size && (previousSequence(0).point +10) %13 <(putSequence(0).point +10) %13){
+        true
+      }else{
+        false
+      }
+	]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+	<![CDATA[
+	val previousSequence = pairSequence(left)
+      val putSequence = pairSequence(right)
+      if(previousSequence.size == putSequence.size && (previousSequence(0).point +10) %13 <(putSequence(0).point +10) %13){
+        true
+      }else{
+        false
+      }
+	]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+	<![CDATA[
+	val previousSequence = tripleSequence(left)
+      val putSequence = tripleSequence(right)
+      if(previousSequence.size == putSequence.size && (previousSequence(0).point +10) %13 <(putSequence(0).point +10) %13){
+        true
+      }else{
+        false
+      }
+	]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+		<![CDATA[
+			(quads(previousCards).point+10) % 13 < (quads(putCards).point+10) % 13
+		]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+		<![CDATA[
+			single(previousCards)!=null && quads(putCards)!=null
+		]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+		<![CDATA[
+			pair(previousCards)!=null && boomb(putCards)!=null
+		]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+		<![CDATA[
+			triple(previousCards)!=null && boomb(putCards)!=null
+		]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+		<![CDATA[
+			tripleWithPair(previousCards)!=null && boomb(putCards)!=null
+		]]>
+		</cardComparisonRule>
+		<cardComparisonRule>
+		<![CDATA[
+			sequence(previousCards)!=null && boomb(putCards)!=null
+		]]>
+		</cardComparisonRule>
+	</cardComparisonRuleSet>
+	<rule>
+		<startWith>
+		<![CDATA[
+		shuffle(stockCards)
+		seats.foreach(seat=>
+			val cards = stockCards.take(16)
+			stockCards.drop(16)
+			deal(seat,cards)
+		)
+		goto(OnBet)
+		]]>
+		</startWith>
+		<when state="OnBet">
+			<onturn cycle="defaultCycle">
+				<case event="Bet(amount)">
+					seat bet amount
+				</case>
+				<on>
+					<condition>
+						!seats.exists(seat=>seat.bet==null)
+					</condition>
+					<action>
+					<![CDATA[
+					seats.maxBy(seat=>seat.bet).role==LANDLORD
+					defaultCycle.startWith(seats.maxBy(seat=>seat.bet))
+					#deal remaining cards
+					deal(seats.maxBy(seat=>seat.bet),stockCards)
+					goto(OnStartPutCard)
+					]]>
+					</action>
+				</on>
+			</onturn>
+		</when>
+		<when state="OnStartPutCard">
+			<onturn cycle="defaultCycle">
+				<case event="PutCard(cards)" guardian="cards is greater than cardsOnTable"><![CDATA[
+				seat put cards
+				goto(OnAppendCard)
+				]]></case>
+			</onturn>
+		</when>
+		<when state="OnAppendCard">
+			<onturn cycle="defaultCycle">
+				<case event="AppendCard(cards)" guardian="cards is greater than cardsOnTable">
+					<![CDATA[
+					seat put cards
+					]]>
+				</case>
+				<case event="Pass">
+					<![CDATA[
+					seat pass
+					]]>
+				</case>
+				<on condition="not one append">
+					defaultCycle startWith seat
+				</on>
+				<on condition="seat.hand.isEmpty">
+					win(seat)
+				</on>
+			</onturn>
+		</when>
+	</rule>
+</game>

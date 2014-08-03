@@ -73,7 +73,7 @@ class Unmatched extends Exception("Unmatched")
 sealed trait State
 case object Idle extends State
 case object Startting extends State
-case object BetPhase extends State
+case object BetState extends State
 case object StartPutCard extends State
 case object AppendPutCard extends State
 
@@ -133,7 +133,7 @@ class CardRoom(id: String, name: String, seatNum: Int) extends Room(id, "card", 
 
         //
 
-        goto(BetPhase)
+        goto(BetState)
       } else {
         stay
       }
@@ -141,7 +141,7 @@ class CardRoom(id: String, name: String, seatNum: Int) extends Room(id, "card", 
     }
   }
 
-  when(BetPhase) {
+  when(BetState) {
     case Event(Bet(userId, amount), Uninitialized) if defaultCycle.onturn(userId) => {
       seats.find(seat => seat.playerId == userId).get.bet = amount
 
