@@ -5,15 +5,13 @@ import play.api._
 import play.api.mvc._
 import play.api.Play.current
 import play.api.http.HeaderNames._
-import me.firecloud.gamecenter.model.RoomFactoryManager
-import me.firecloud.gamecenter.card.model.CardRoomFactory
 import play.libs.Akka
 import me.firecloud.gamecenter.model.PlayerSupervisor
 import akka.actor.Props
 import play.api.libs.concurrent.Execution.Implicits._
-import me.firecloud.gamecenter.model.RoomSupervisor
 import scala.concurrent.Future
 import me.firecloud.utils.logging.Logging
+import me.firecloud.gamecenter.service.RoomSupervisor
 
 /**
  * @author kkppccdd
@@ -53,7 +51,7 @@ object AuthenticationFilter extends Filter with Logging{
 object Global extends WithFilters(AuthenticationFilter) {
   override def onStart(app: Application) {
     Logger.info("Application has started")
-    RoomFactoryManager.registerFactory(new CardRoomFactory)
+
 
     // initialize supervisor actors
 

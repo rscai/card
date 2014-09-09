@@ -1,4 +1,4 @@
-@(room: me.firecloud.gamecenter.model.RoomDescription, selfId: String)
+@(room: me.firecloud.gamecenter.model.Room, selfId: String)
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,7 +31,6 @@ var fc = {
 	    },
 	    roomInfo : {
 	        id : "@room.id",
-	        name : "@room.name",
 	        seatSize:@room.seatNum,
 	    },
 	    self : {

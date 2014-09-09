@@ -14,7 +14,7 @@ import anorm.SqlParser._
  * @author kkppccdd
  *
  */
-case class Game(val kind: String, val icon: String) {
+case class Game(val kind: String, val icon: String,val engineClass:String) {
 
 }
 

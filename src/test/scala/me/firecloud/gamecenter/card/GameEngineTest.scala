@@ -14,7 +14,6 @@ import org.junit.Before
 import org.junit.After
 import org.apache.http.util.EntityUtils
 import com.fasterxml.jackson.databind.ObjectMapper
-import me.firecloud.gamecenter.model.RoomDescription
 import org.junit.Assert
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -31,6 +30,7 @@ import java.util.concurrent.LinkedBlockingQueue
 import com.ning.http.client.websocket.WebSocket
 import me.firecloud.utils.logging.Logging
 import java.util.concurrent.TimeUnit
+import me.firecloud.gamecenter.model.Room
 
 /**
  * @author kkppccdd
@@ -97,11 +97,11 @@ class GameEngineTest {
         val createJson = "{\"kind\":\"card\",\"name\":\"test\"}"
 
         val response = post("/rest/room", createJson)
-        val roomDescription = mapper.readValue(response, typeReference[RoomDescription]).asInstanceOf[RoomDescription]
+        val roomDescription = mapper.readValue(response, typeReference[Room]).asInstanceOf[Room]
 
         Assert.assertNotNull(roomDescription.id)
         Assert.assertEquals("card", roomDescription.kind)
-        Assert.assertEquals("test", roomDescription.name)
+        
 
         // create three websocket
 

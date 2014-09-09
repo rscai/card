@@ -15,8 +15,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.core.`type`.TypeReference
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
-import me.firecloud.gamecenter.model.RoomDescription
-import me.firecloud.gamecenter.model.RoomFactoryManager
 import play.libs.Akka
 import me.firecloud.utils.logging.Logging
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
@@ -30,6 +28,8 @@ import me.firecloud.gamecenter.model.Player
 import me.firecloud.gamecenter.dao.GameDao
 import me.firecloud.gamecenter.dao.PlayerDao
 import me.firecloud.gamecenter.dao.Get
+import me.firecloud.gamecenter.model.Room
+import me.firecloud.gamecenter.engine.Engine
 
 /**
  * @author kkppccdd
@@ -52,7 +52,7 @@ object Hall extends Controller with Logging {
       // create room model
       val payload = request.body.asJson
 
-      val roomConfig = mapper.readValue[RoomDescription](payload.get.toString)
+      val roomConfig = mapper.readValue[Room](payload.get.toString)
 
       // populate icon
 
@@ -66,7 +66,7 @@ object Hall extends Controller with Logging {
 
         val future = roomSupervisor ? new Create(roomConfig)
 
-        val roomDescription = Await.result(future, timeout.duration).asInstanceOf[RoomDescription]
+        val roomDescription = Await.result(future, timeout.duration).asInstanceOf[Room]
         // return room
         Ok(mapper.writeValueAsString(roomDescription))
       }.getOrElse {
@@ -88,7 +88,7 @@ object Hall extends Controller with Logging {
 
         val future = roomSupervisor ? new Query(criteria)
 
-        val roomDescriptions = Await.result(future, timeout.duration).asInstanceOf[List[RoomDescription]]
+        val roomDescriptions = Await.result(future, timeout.duration).asInstanceOf[List[Room]]
 
         // return rooms
         Ok(mapper.writeValueAsString(roomDescriptions))
@@ -104,7 +104,7 @@ object Hall extends Controller with Logging {
         implicit val timeout = Timeout(1 seconds)
 
         val future = roomSupervisor ? new Get(roomId)
-        val room = Await.result(future, timeout.duration).asInstanceOf[RoomDescription]
+        val room = Await.result(future, timeout.duration).asInstanceOf[Room]
         
         // return rooms
         Ok(mapper.writeValueAsString(room))
@@ -120,9 +120,9 @@ object Hall extends Controller with Logging {
         implicit val timeout = Timeout(1 seconds)
 
         val future = roomSupervisor ? new Get(roomId)
-        val room = Await.result(future, timeout.duration).asInstanceOf[RoomDescription]
+        val room = Await.result(future, timeout.duration).asInstanceOf[Room]
 
-        val onPlaying = room.seats!=null && room.seats.size == room.seatNum && !room.seats.exists((x: Tuple3[String, String, String]) => x._1 == null)
+        val onPlaying = room.seats!=null && room.seats.size == room.parameters.get("seatNum").map{value=>value.asInstanceOf[Int]}.getOrElse{0} && !room.seats.exists((x: Tuple3[String, String, String]) => x._1 == null)
         if (onPlaying == true) {
           // get user id from cookies
           request.session.get("player-id").map { playerId =>

@@ -1,7 +1,7 @@
 /**
  *
  */
-package me.firecloud.gamecenter.card.model
+package me.firecloud.gamecenter.card.engine
 
 import org.junit._
 import org.junit.Assert._
@@ -12,20 +12,25 @@ import akka.testkit.TestKit
 import akka.testkit.ImplicitSender
 import akka.testkit.TestProbe
 import me.firecloud.gamecenter.model.StartGame
-import me.firecloud.gamecenter.model.Dealer
-import me.firecloud.gamecenter.model.RoomFactory
-import me.firecloud.gamecenter.model.RoomDescription
 import akka.actor._
 import akka.actor.Actor._
 import me.firecloud.gamecenter.model.EndGame
 import me.firecloud.gamecenter.model.Message
-import me.firecloud.gamecenter.model.PlayerActor
 import me.firecloud.gamecenter.model.Notification
 import me.firecloud.gamecenter.model.Ask
 import me.firecloud.gamecenter.model.Ready
 import me.firecloud.gamecenter.model.PlayerPropertyChange
 import akka.testkit._
-import me.firecloud.gamecenter.model.PlayerSupervisor
+import me.firecloud.gamecenter.card.model.AppendCard
+import me.firecloud.gamecenter.card.model.Bet
+import me.firecloud.gamecenter.card.model.Card
+import me.firecloud.gamecenter.card.model.DealCard
+import me.firecloud.gamecenter.card.model.Pass
+import me.firecloud.gamecenter.card.model.PutCard
+import me.firecloud.gamecenter.card.model.Suit
+import me.firecloud.gamecenter.model.Ask
+import me.firecloud.gamecenter.model.Notification
+import java.util.UUID
 
 class MockSupervisorActor extends Actor {
   def receive = {
@@ -46,12 +51,10 @@ class ByPassActor(targetActorRef: ActorRef) extends Actor {
  * @date Mar 9, 2014
  *
  */
-class CardEngineTest extends TestKit(ActorSystem("unittest")) with ImplicitSender {
+class FightlordCardEngineTest extends TestKit(ActorSystem("unittest")) with ImplicitSender {
 
-  var roomFactory: RoomFactory = null
-  var description: RoomDescription = null
-  var roomProps: Props = null
-  var roomActorRef: TestActorRef[CardRoom] = null
+  var roomActorRef: TestActorRef[FightlordCardEngine] = null
+  var roomId:String=null
 
   // construct mock player
 
@@ -67,11 +70,11 @@ class CardEngineTest extends TestKit(ActorSystem("unittest")) with ImplicitSende
 
   @Before
   def setUp() {
-    roomFactory = new CardRoomFactory()
-    val tuple = roomFactory.build(new RoomDescription("card", "test-room", 3))
-    description = tuple._1
-    roomProps = tuple._2
-    roomActorRef = TestActorRef(roomProps, name = description.id)
+
+
+    roomId= UUID.randomUUID().toString()
+    
+    roomActorRef = TestActorRef(new FightlordCardEngine(roomId,Map({"seatNum"->3})),name=roomId)
 
     // construct mock player
 
@@ -179,11 +182,11 @@ class CardEngineTest extends TestKit(ActorSystem("unittest")) with ImplicitSende
   def testJoinRoom() {
 
     // construct join room message
-    val joinRoom1 = new JoinRoom("1", description.id)
+    val joinRoom1 = new JoinRoom("1", roomId)
 
-    val joinRoom2 = new JoinRoom("2", description.id)
+    val joinRoom2 = new JoinRoom("2", roomId)
 
-    val joinRoom3 = new JoinRoom("3", description.id)
+    val joinRoom3 = new JoinRoom("3", roomId)
 
     player1.send(roomActorRef, joinRoom1)
 
@@ -222,11 +225,11 @@ class CardEngineTest extends TestKit(ActorSystem("unittest")) with ImplicitSende
   @Test
   def testRejoinRoom() {
     // construct join room message
-    val joinRoom1 = new JoinRoom("1", description.id)
+    val joinRoom1 = new JoinRoom("1", roomId)
 
-    val joinRoom2 = new JoinRoom("2", description.id)
+    val joinRoom2 = new JoinRoom("2", roomId)
 
-    val joinRoom3 = new JoinRoom("3", description.id)
+    val joinRoom3 = new JoinRoom("3", roomId)
 
     player1.send(roomActorRef, joinRoom1)
 
@@ -289,11 +292,11 @@ class CardEngineTest extends TestKit(ActorSystem("unittest")) with ImplicitSende
   def testStartGame() {
 
     // construct join room message
-    val joinRoom1 = new JoinRoom("1", description.id)
+    val joinRoom1 = new JoinRoom("1", roomId)
 
-    val joinRoom2 = new JoinRoom("2", description.id)
+    val joinRoom2 = new JoinRoom("2", roomId)
 
-    val joinRoom3 = new JoinRoom("3", description.id)
+    val joinRoom3 = new JoinRoom("3", roomId)
 
     player1.send(roomActorRef, joinRoom1)
 
