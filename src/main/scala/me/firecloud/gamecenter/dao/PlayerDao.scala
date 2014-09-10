@@ -10,8 +10,8 @@ import com.novus.salat.annotations._
 import com.novus.salat.dao._
 import se.radley.plugin.salat._
 import com.mongodb.casbah.commons.MongoDBObject
-
 import me.firecloud.gamecenter.dao.mongodbContext._
+import scala.util.Random
 
 object PlayerDao {
   val dao = new SalatDAO[Player, String](collection = mongoCollection("players")) {}
@@ -29,7 +29,9 @@ object PlayerDao {
   }
 
   def get(id: String): Option[Player] = {
-    dao.findOneById(id)
+    //dao.findOneById(id)
+    val rn =id.hashCode().abs %  7+1
+    Some(new Player(id,"player "+rn,"/assets/images/avatars/"+rn+".png"))
   }
 
   def get(criteria: (String, Any)*): Option[Player] = {

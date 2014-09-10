@@ -18,11 +18,11 @@ import akka.actor.Actor
 object RoomFactory {
 
   def build(room:Room):Tuple2[Props,Room]={
-    GameDao.get(room.kind).map{
+    GameDao.get("kind" -> room.kind).map{
       game=>
       val id = UUID.randomUUID().toString()
       
-      val props = Props(Class.forName(game.engineClass), id,room.parameters)
+      val props = Props(Class.forName(game.engineClass), id,room.seatNum,room.parameters)
       room.id=id
       
       (props,room)

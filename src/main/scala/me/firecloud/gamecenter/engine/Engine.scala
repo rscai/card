@@ -32,7 +32,7 @@ import me.firecloud.gamecenter.model.SeatCycle
 
 
 
-abstract class Engine[SeatType <: Seat](val id: String, val kind: String, val parameters: Map[String, Any]) extends Actor {
+abstract class Engine[SeatType <: Seat](val id: String, val seatNum:Int, val kind: String, val parameters: Map[String, Any]) extends Actor {
   /**
    * *****
    * constants
@@ -40,12 +40,9 @@ abstract class Engine[SeatType <: Seat](val id: String, val kind: String, val pa
   val KEY_SEATNUM: String = "seatNum"
 
   var timeout: Long = 45 // seconds
-  val seats: List[SeatType] = initSeat(parameters)
   var defaultCycle: SeatCycle[SeatType] = null;
 
-  private def initSeat(parameters: Map[String, Any]):List[SeatType]={
-    (for (i <- (1 to parameters.get("KEY_SEATNUM").map { value => value.asInstanceOf[Int] }.getOrElse(3))) yield new Seat()).toList.asInstanceOf[List[SeatType]]
-  }
+
   /**
    * **************************
    * action performers.

@@ -58,8 +58,12 @@ case object AppendPutCard extends State
 sealed trait Data
 case object Uninitialized extends Data
 
-class CardRoom[SeatType <: CardSeat](id: String, kind: String,parameters: Map[String,Any]) extends Engine[SeatType](id, kind,parameters) with FSM[State, Data] with Logging {
+class CardRoom[SeatType <: CardSeat](id: String, seatNum:Int,kind: String,parameters: Map[String,Any]) extends Engine[SeatType](id, seatNum,kind,parameters) with FSM[State, Data] with Logging {
  
+  // initialize seats
+  
+  val seats:List[SeatType]=(for (i <- (1 to seatNum)) yield new CardSeat()).toList.asInstanceOf[List[SeatType]]
+
   
 
   var lastAppendSeat: SeatType=_

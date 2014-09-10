@@ -122,7 +122,7 @@ object Hall extends Controller with Logging {
         val future = roomSupervisor ? new Get(roomId)
         val room = Await.result(future, timeout.duration).asInstanceOf[Room]
 
-        val onPlaying = room.seats!=null && room.seats.size == room.parameters.get("seatNum").map{value=>value.asInstanceOf[Int]}.getOrElse{0} && !room.seats.exists((x: Tuple3[String, String, String]) => x._1 == null)
+        val onPlaying = room.seats!=null && room.seats.size == room.seatNum && !room.seats.exists((x: Tuple3[String, String, String]) => x._1 == null)
         if (onPlaying == true) {
           // get user id from cookies
           request.session.get("player-id").map { playerId =>

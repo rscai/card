@@ -74,7 +74,7 @@ class FightlordCardEngineTest extends TestKit(ActorSystem("unittest")) with Impl
 
     roomId= UUID.randomUUID().toString()
     
-    roomActorRef = TestActorRef(new FightlordCardEngine(roomId,Map({"seatNum"->3})),name=roomId)
+    roomActorRef = TestActorRef(new FightlordCardEngine(roomId,3,Map()),name=roomId)
 
     // construct mock player
 

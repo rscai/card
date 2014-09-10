@@ -29,11 +29,12 @@ cc.game.onStart = function() {
 		fc.room.players=fc.roomInfo.seats;
 		
 		// transform avatar url with crosproxy to go pass CROS restriction 
+		/*
 		for(var i=0;i<fc.room.players.length;i++){
 			var originalAvatarUrl=fc.room.players[i].avatar;
-			originalAvatarUrl="http://www.corsproxy.com/"+originalAvatarUrl.replace("http://","");
+			originalAvatarUrl="http://"+window.location.hostname+originalAvatarUrl.replace("http://","");
 			fc.room.players[i].avatar=originalAvatarUrl;
-		}
+		}*/
 		
 		fc.room.init();
 		

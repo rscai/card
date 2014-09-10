@@ -19,7 +19,7 @@ import me.firecloud.gamecenter.card.model.CardSeat
  * @author kkppccdd
  *
  */
-class FightlordCardEngine(id: String, parameters:Map[String,Any]) extends CardRoom[CardSeat](id, "Fightlord",parameters) {
+class FightlordCardEngine(id: String, seatNum:Int, parameters:Map[String,Any]) extends CardRoom[CardSeat](id, seatNum,"Fightlord",parameters) {
  startWith(Idle, Uninitialized)
 
   when(Idle) {

@@ -12,6 +12,7 @@ import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Future
 import me.firecloud.utils.logging.Logging
 import me.firecloud.gamecenter.service.RoomSupervisor
+import java.util.UUID
 
 /**
  * @author kkppccdd
@@ -20,38 +21,23 @@ import me.firecloud.gamecenter.service.RoomSupervisor
  *
  */
 
-object AuthenticationFilter extends Filter with Logging{
+object AuthenticationFilter extends Filter with Logging {
   override def apply(next: (RequestHeader) => Future[SimpleResult])(request: RequestHeader): Future[SimpleResult] = {
-
-    if (request.path.startsWith("/authentication") || request.path.startsWith("/assets") || request.path.startsWith("/favicon.ico")) {
-      // pass
-      val result = next(request)
-      result
+    if (request.path.startsWith("/assets")) {
+      next(request)
     } else {
-      // check whether authenticated
-      request.session.get("expire").map { expire =>
-        // validate expire
-        if (expire.toLong < System.currentTimeMillis()) {
-          // invalid
-          debug("expire:"+expire+",current timestamp:"+System.currentTimeMillis())
-          
-          Future.successful(Results.Redirect("/authentication/login.html", 302).withSession("request-target"->request.path))
-        } else {
+      request.session.get("player-id").map {
+        playerId =>
           next(request)
-        }
       }.getOrElse {
-        debug("don't find expire")
-        
-        Future.successful(Results.Redirect("/authentication/login.html", 302).withSession("request-target"->request.path))
+        Future.successful(Results.Redirect(request.path, 302).withSession("player-id" -> UUID.randomUUID().toString))
       }
-
     }
   }
 }
 object Global extends WithFilters(AuthenticationFilter) {
   override def onStart(app: Application) {
     Logger.info("Application has started")
-
 
     // initialize supervisor actors
 
